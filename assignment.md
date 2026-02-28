@@ -1,6 +1,10 @@
+Here is your **updated Markdown file** with all image paths changed to reference the `screenshots/` folder.
+
+---
+
 # Persistent Gitea on EC2 with EBS and S3 Backup
 
-**Cloud Computing Assignment - Sandeep Shiraskar**  
+**Cloud Computing Assignment - Sandeep Shiraskar**
 **Date:** February 27, 2026
 
 ---
@@ -17,12 +21,13 @@ This deployment runs Gitea as a Docker container on an AWS EC2 instance with all
 
 Launched an Ubuntu EC2 instance (`t3.micro`) in the `us-east-2` region with SSH access on port 22 and Gitea web access on port 3000.
 
-![EC2 Instance Running](ec2_instances.png)
+![EC2 Instance Running](screenshots/ec2_instances.png)
 
 **Key details:**
-- Instance ID: `i-0db5768bc51f52961`
-- Public IP: `18.226.93.154`
-- Security Group: allows TCP 22 (SSH) and TCP 3000 (Gitea)
+
+* Instance ID: `i-0db5768bc51f52961`
+* Public IP: `18.226.93.154`
+* Security Group: allows TCP 22 (SSH) and TCP 3000 (Gitea)
 
 ---
 
@@ -30,8 +35,7 @@ Launched an Ubuntu EC2 instance (`t3.micro`) in the `us-east-2` region with SSH 
 
 I created a 20GB EBS volume (`nvme1n1`) in the same availability zone as the EC2 instance and attached it.
 
-![lsblk output showing attached volume](lsblk_ss.png)
-
+![lsblk output showing attached volume](screenshots/lsblk_ss.png)
 
 The `lsblk` command shows the new volume as `nvme1n1` (20G) attached to the instance.
 
@@ -48,7 +52,7 @@ sudo mount /dev/nvme1n1 ~/data
 df -h
 ```
 
-![df -h showing /home/ubuntu/data mounted](home_ubuntu_data_reaappear.png)
+![df -h showing /home/ubuntu/data mounted](screenshots/home_ubuntu_data_reaappear.png)
 
 The volume is now mounted and has 20GB of available space at `/home/ubuntu/data`.
 
@@ -63,9 +67,10 @@ sudo blkid  # Get the UUID
 sudo nano /etc/fstab
 ```
 
-![/etc/fstab configuration](fstab_ss.png)
+![/etc/fstab configuration](screenshots/fstab_ss.png)
 
 **fstab entry:**
+
 ```
 UUID=0a8881e0-0dd2-4429-8198-fbdd0cd04ca2 /home/ubuntu/data ext4 defaults,nofail 0 2
 ```
@@ -86,7 +91,7 @@ sudo apt install docker.io docker-compose -y
 sudo usermod -aG docker ubuntu
 ```
 
-![Docker version check](docker_entry.png)
+![Docker version check](screenshots/docker_entry.png)
 
 Docker version `29.2.1` and Docker Compose version `v5.1.0` are now installed.
 
@@ -96,9 +101,10 @@ Docker version `29.2.1` and Docker Compose version `v5.1.0` are now installed.
 
 I created a `docker-compose.yml` file that binds the EBS volume (`/home/ubuntu/data`) to the container's `/data` directory:
 
-![docker-compose.yml configuration](gitea_docker_compose.png)
+![docker-compose.yml configuration](screenshots/gitea_docker_compose.png)
 
 **Key configuration:**
+
 ```yaml
 services:
   server:
@@ -130,25 +136,25 @@ docker compose up -d
 
 I accessed Gitea at `http://18.226.93.154:3000` and completed the initial setup.
 
-![Gitea web UI home page](gitea_webUI.png)
+![Gitea web UI home page](screenshots/gitea_webUI.png)
 
 After setup, I created a test repository called `gitea_sandeep_assignment` and made my first commit with a `README.md` file:
-!![Starting gitea with binding mounted with README](starting_gitea_binding_mount.png)
-![First commit with README](gitea_first_commit_with_readme.png)
+
+![Starting gitea with binding mounted with README](screenshots/starting_gitea_binding_mount.png)
+![First commit with README](screenshots/gitea_first_commit_with_readme.png)
 
 The repository is now live with the README visible in the UI.
-![WebUI Gitea](gitea_webUI.png)
+
+![WebUI Gitea](screenshots/gitea_webUI.png)
+
 ---
 
 ### B4. Persistence Test
 
 I tested persistence by stopping and removing the container, then recreating it with the same bind mount. The repository and all data survived because it's stored on the EBS volume, not inside the container.
 
-![container restart](persistence_test_container.png)
-![Gitea UI after container restart](persistence_test_UI.png)
-
-
-
+![container restart](screenshots/persistence_test_container.png)
+![Gitea UI after container restart](screenshots/persistence_test_UI.png)
 
 After the container was recreated, the repository remained intact, confirming that data persists on the EBS volume.
 
@@ -159,10 +165,11 @@ After the container was recreated, the repository remained intact, confirming th
 ### C1. Create S3 Bucket
 
 I created an S3 bucket named `sshiraskar-gitea-2026` in the `us-east-2` region with:
-- Block public access enabled
-- Default encryption enabled
 
-![S3 bucket info](bucket_info.png)
+* Block public access enabled
+* Default encryption enabled
+
+![S3 bucket info](screenshots/bucket_info.png)
 
 ---
 
@@ -170,7 +177,7 @@ I created an S3 bucket named `sshiraskar-gitea-2026` in the `us-east-2` region w
 
 To avoid hardcoding AWS credentials, I attached an IAM role with `AmazonS3FullAccess` policy to the EC2 instance:
 
-![IAM S3FullAccess permission](IAM_S3FULLACCESS_PERMISSION.png)
+![IAM S3FullAccess permission](screenshots/IAM_S3FULLACCESS_PERMISSION.png)
 
 This allows the instance to upload and download from S3 without storing credentials in scripts.
 
@@ -207,7 +214,7 @@ aws s3 cp "${ARCHIVE}" "${BUCKET}/"
 aws s3 ls "${BUCKET}/"
 ```
 
-![Create and Upload backup](stepc3_create_and_upload_backup.png)
+![Create and Upload backup](screenshots/stepc3_create_and_upload_backup.png)
 
 The backup was successfully uploaded to S3 as `gitea-backup-20260227T234300Z.tar.gz`.
 
@@ -224,7 +231,7 @@ git commit -m "Remove README for restore test"
 git push
 ```
 
-![Repository showing README deleted](removed_ a_file_from_gitea.png)
+![Repository showing README deleted](screenshots/removed_ a_file_from_gitea.png)
 
 The README is now missing from the Gitea UI.
 
@@ -260,8 +267,6 @@ docker start gitea
 
 5. **Verify in the UI:**
 
-![Repository with README restored](restored-files_after-backup.png)
+![Repository with README restored](screenshots/restored-files_after-backup.png)
 
 After the restore, the `README.md` file reappeared in the repository, confirming that the backup and restore procedure works correctly.
-
-
