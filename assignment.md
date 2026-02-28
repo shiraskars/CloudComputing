@@ -263,6 +263,6 @@ docker start gitea
 
 5. **Verify in the UI:**
 
-![Repository with README restored](screenshots/restored_files_after backup.png)
+![Repository with README restored](screenshots/restored_files_after_backup.png)
 
 After the restore, the `README.md` file reappeared in the repository, confirming that the backup and restore procedure works correctly.
