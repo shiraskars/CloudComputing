@@ -1,7 +1,3 @@
-Here is your **updated Markdown file** with all image paths changed to reference the `screenshots/` folder.
-
----
-
 # Persistent Gitea on EC2 with EBS and S3 Backup
 
 **Cloud Computing Assignment - Sandeep Shiraskar**
